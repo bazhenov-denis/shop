@@ -1,13 +1,35 @@
-import type { OrderRequest, OrderResponse } from "@/types/index.d.ts";
+// src/api/orders.ts
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://fleshly-economic-yellowhammer.cloudpub.ru";
+
+export interface OrderRequestItem {
+    productId: number;
+    quantity: number;
+}
+
+export interface OrderRequest {
+    userId: string;
+    items: OrderRequestItem[];
+}
+
+export interface OrderResponseItem {
+    productId: number;
+    title: string;
+    quantity: number;
+    price: number;
+}
+
+export interface OrderResponse {
+    orderId: number;
+    totalAmount: number;
+    status: string;
+    createdAt: string; // ISO-строка
+    items: OrderResponseItem[];
+}
 
 /**
- * Создание нового заказа.
+ * Создать новый заказ.
  * POST http://localhost:8080/order
- *
- * @param userId – ID пользователя (пока «1»)
- * @param items – массив {productId, quantity}
  */
 export async function createOrder(
     userId: string,
@@ -20,16 +42,48 @@ export async function createOrder(
             quantity: it.quantity,
         })),
     };
+
     const response = await fetch(`${BASE_URL}/order`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
     if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Ошибка при создании заказа: ${text}`);
+        const txt = await response.text();
+        throw new Error(`Ошибка при создании заказа: ${txt}`);
+    }
+    const data: OrderResponse = await response.json();
+    return data;
+}
+
+/**
+ * Получить список всех заказов пользователя.
+ * GET http://localhost:8080/order/{userId}
+ */
+export async function fetchAllOrders(userId: string): Promise<OrderResponse[]> {
+    const response = await fetch(`${BASE_URL}/order/${userId}`);
+    if (!response.ok) {
+        throw new Error(
+            `Не удалось получить список заказов (status: ${response.status})`
+        );
+    }
+    const data: OrderResponse[] = await response.json();
+    return data;
+}
+
+/**
+ * Получить один заказ по ID пользователя и ID заказа.
+ * GET http://localhost:8080/order/{userId}/{orderId}
+ */
+export async function fetchOrderById(
+    userId: string,
+    orderId: number
+): Promise<OrderResponse> {
+    const response = await fetch(`${BASE_URL}/order/${userId}/${orderId}`);
+    if (!response.ok) {
+        throw new Error(
+            `Не удалось получить заказ с ID=${orderId} (status: ${response.status})`
+        );
     }
     const data: OrderResponse = await response.json();
     return data;

@@ -1,45 +1,39 @@
+// src/components/CartSidebar.tsx
 import React from "react";
 import { useCartState, useCartDispatch } from "@/context/CartContext";
 import type { CartItem } from "@/types/index.d.ts";
 import placeholder from "@/assets/placeholder.jpg";
-import { createOrder } from "@/api/orders";
-import type { OrderResponse } from "@/types/index.d.ts";
+import {
+    createOrder,
+    OrderResponse,
+    // остальные функции оставляем
+} from "@/api/orders";
+import { useNavigate } from "react-router-dom";
 
 interface CartSidebarProps {
     isOpen: boolean;
     onClose: () => void;
-    onOrderSuccess: (order: OrderResponse) => void;
 }
 
-/**
- * Боковая панель «Корзина»:
- * - Отображает все товары, которые есть в корзине
- * - Позволяет увеличить/уменьшить количество каждого
- * - Показывает итоговую сумму
- * - Кнопка «Оформить заказ» делает POST /order
- */
-export default function CartSidebar({
-                                        isOpen,
-                                        onClose,
-                                        onOrderSuccess,
-                                    }: CartSidebarProps) {
+export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     const { items, totalAmount } = useCartState();
     const dispatch = useCartDispatch();
+    const navigate = useNavigate();
 
-    // Увеличение количества на 1
+    // Увеличить количество
     const handleIncrement = (productId: number) => {
-        const targetItem = items.find((it) => it.productId === productId);
-        if (!targetItem) return;
+        const target = items.find((it) => it.productId === productId);
+        if (!target) return;
         dispatch({
             type: "ADD_ITEM",
             payload: {
-                product: { id: productId, title: targetItem.title, price: targetItem.price },
+                product: { id: productId, title: target.title, price: target.price },
                 quantity: 1,
             },
         });
     };
 
-    // Уменьшение количества (или удаление, если 1)
+    // Уменьшить количество/удалить
     const handleDecrement = (productId: number) => {
         dispatch({
             type: "REMOVE_ITEM",
@@ -50,41 +44,40 @@ export default function CartSidebar({
     // Оформление заказа
     const handlePlaceOrder = async () => {
         if (items.length === 0) return;
-        // Формируем массив для POST
+
         const payloadItems = items.map((it) => ({
             productId: it.productId,
             quantity: it.quantity,
         }));
+
         try {
-            const orderResponse = await createOrder("1", payloadItems); // пока жёстко userId = "1"
-            // После успешного ответа сбрасываем корзину
+            const orderResponse: OrderResponse = await createOrder("1", payloadItems);
+            // Очистить корзину
             dispatch({ type: "CLEAR_CART" });
-            // Передаём объект заказа наверх
-            onOrderSuccess(orderResponse);
-            // Закрываем боковую панель
+
+            // Закроем боковую панель
             onClose();
+
+            // Перенаправляем на страницу с деталями недавно созданного заказа
+            navigate(`/orders/${orderResponse.orderId}`);
         } catch (err) {
             console.error(err);
             alert("Ошибка при оформлении заказа");
         }
     };
 
-    // Если isOpen = false, просто не рендерим панель
     if (!isOpen) {
         return null;
     }
 
     return (
         <div className="fixed inset-0 z-50 flex">
-            {/* Полупрозрачный задний фон */}
             <div
                 className="fixed inset-0 bg-black bg-opacity-50"
                 onClick={onClose}
             ></div>
 
-            {/* Сама боковая панель */}
             <div className="relative ml-auto w-full sm:w-96 bg-white shadow-xl overflow-y-auto">
-                {/* Заголовок и кнопка закрыть */}
                 <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
                     <h2 className="text-xl font-semibold text-gray-800">Корзина</h2>
                     <button
@@ -92,12 +85,10 @@ export default function CartSidebar({
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
                     >
-                        <span className="sr-only">Закрыть</span>
-                        ×
+                        <span className="sr-only">Закрыть</span>×
                     </button>
                 </div>
 
-                {/* Контент с товарами */}
                 <div className="px-6 py-4">
                     {items.length === 0 ? (
                         <p className="text-gray-600">В корзине нет товаров.</p>
@@ -108,7 +99,6 @@ export default function CartSidebar({
                                     key={item.productId}
                                     className="flex items-center space-x-4"
                                 >
-                                    {/* Изображение */}
                                     <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
                                         <img
                                             src={placeholder}
@@ -116,8 +106,6 @@ export default function CartSidebar({
                                             className="object-cover w-full h-full"
                                         />
                                     </div>
-
-                                    {/* Информация о товаре */}
                                     <div className="flex-1">
                                         <p className="text-base font-medium text-gray-800">
                                             {item.title}
@@ -126,8 +114,6 @@ export default function CartSidebar({
                                             ₽{item.price.toFixed(2)} × {item.quantity}
                                         </p>
                                     </div>
-
-                                    {/* Контролы количества */}
                                     <div className="flex flex-col items-center space-y-1">
                                         <button
                                             type="button"
@@ -153,7 +139,6 @@ export default function CartSidebar({
                     )}
                 </div>
 
-                {/* Футер: Итого и Кнопка оформить */}
                 <div className="px-6 py-4 border-t border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-lg font-semibold text-gray-800">Итого:</span>

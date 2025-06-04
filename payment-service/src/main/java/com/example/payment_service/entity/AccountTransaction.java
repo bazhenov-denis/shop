@@ -1,5 +1,6 @@
 package com.example.payment_service.entity;
 
+import com.example.payment_service.enums.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,7 +39,7 @@ public class AccountTransaction {
   private BigDecimal amount;
 
   @Column(name = "type", nullable = false, length = 20)
-  private String type;
+  private TransactionType type;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
@@ -46,11 +47,10 @@ public class AccountTransaction {
   public AccountTransaction() {
   }
 
-  public AccountTransaction(BigDecimal amount, String type) {
+  public AccountTransaction(BigDecimal amount, TransactionType type) {
     this.amount = amount;
     this.type = type;
   }
-
 
   /**
    * Автоматически устанавливаем createdAt при первой вставке.
