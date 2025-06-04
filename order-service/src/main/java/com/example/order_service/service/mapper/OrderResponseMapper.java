@@ -33,4 +33,14 @@ public class OrderResponseMapper {
         orderItem.getPrice()
     );
   }
+
+  public List<OrderResponse> toDtoList(List<Order> orders) {
+    if (orders == null) {
+      return new ArrayList<>();
+    }
+    return orders.stream()
+        .map(this::toDto)
+        .collect(Collectors.toList());
+  }
+
 }

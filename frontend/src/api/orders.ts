@@ -1,6 +1,6 @@
 // src/api/orders.ts
 
-const BASE_URL = "https://fleshly-economic-yellowhammer.cloudpub.ru";
+const BASE_URL = "http://localhost:8080";
 
 export interface OrderRequestItem {
     productId: number;

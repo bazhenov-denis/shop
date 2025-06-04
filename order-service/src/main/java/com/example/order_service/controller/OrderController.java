@@ -3,8 +3,11 @@ package com.example.order_service.controller;
 import com.example.order_service.dto.OrderRequest;
 import com.example.order_service.dto.OrderResponse;
 import com.example.order_service.service.OrderService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +29,15 @@ public class OrderController {
   @ResponseStatus(HttpStatus.CREATED)
   public OrderResponse createOrder(@Valid @RequestBody OrderRequest orderDto) {
     return orderService.createOrder(orderDto);
+  }
+
+  @GetMapping("/{userId}")
+  public List<OrderResponse> getAllOrders(@PathVariable Long userId) {
+    return orderService.getOrders(userId);
+  }
+
+  @GetMapping("/{userId}/{orderId}")
+  public OrderResponse getOrder(@PathVariable Long userId, @PathVariable Long orderId) {
+    return orderService.getOrder(userId, orderId);
   }
 }

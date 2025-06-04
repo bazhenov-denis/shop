@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AccountResponce {
-  public Long accountId;
+  public Long userId;
   public Long balance;
 }
+

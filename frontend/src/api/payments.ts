@@ -1,7 +1,7 @@
 // src/api/payments.ts
 
 // Базовый URL вашего бэкенда
-const BASE_URL = "https://fleshly-economic-yellowhammer.cloudpub.ru";
+const BASE_URL = "http://localhost:8080";
 
 export interface AccountInfo {
     userId: number;

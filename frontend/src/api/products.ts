@@ -1,6 +1,6 @@
 import type { Product } from "@/types/index.d.ts";
 
-const BASE_URL = "https://fleshly-economic-yellowhammer.cloudpub.ru";
+const BASE_URL = "http://localhost:8080";
 
 /**
  * Получение списка всех товаров.

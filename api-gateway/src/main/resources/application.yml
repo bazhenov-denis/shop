@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 0.0.0.0
 
 spring:
   application:
@@ -22,7 +23,7 @@ spring:
               '[/**]':
                 allowedOrigins:
                   - "http://localhost:5173"
-                  - "https://front.prod.com"
+                  - "https://densely-bewitching-sloth.cloudpub.ru"
                 allowedMethods:
                   - GET
                   - POST
