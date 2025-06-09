@@ -9,6 +9,7 @@ import com.example.order_service.service.mapper.OrderResponseMapper;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,7 @@ public class OrderService {
   private final OrderBuilder orderBuilder;
   private final OrderResponseMapper responseMapper;
 
+  @Autowired
   public OrderService(OrderRepository orderRepository,
       OrderBuilder orderBuilder,
       OrderResponseMapper responseMapper) {
@@ -25,6 +27,7 @@ public class OrderService {
     this.orderBuilder = orderBuilder;
     this.responseMapper = responseMapper;
   }
+
 
   public OrderResponse createOrder(OrderRequest orderRequest) {
     Order orderToSave = orderBuilder.buildOrder(orderRequest);
