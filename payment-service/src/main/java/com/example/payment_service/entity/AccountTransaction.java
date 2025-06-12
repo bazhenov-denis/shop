@@ -3,6 +3,8 @@ package com.example.payment_service.entity;
 import com.example.payment_service.enums.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,6 +40,7 @@ public class AccountTransaction {
   @Column(name = "amount", nullable = false, precision = 19, scale = 2)
   private BigDecimal amount;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false, length = 20)
   private TransactionType type;
 
@@ -45,11 +48,6 @@ public class AccountTransaction {
   private LocalDateTime createdAt;
 
   public AccountTransaction() {
-  }
-
-  public AccountTransaction(BigDecimal amount, TransactionType type) {
-    this.amount = amount;
-    this.type = type;
   }
 
   /**

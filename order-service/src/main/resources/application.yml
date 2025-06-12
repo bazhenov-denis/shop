@@ -11,3 +11,31 @@ spring:
   sql:
     init:
       mode: always
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # включаем идемпотентного продюсера и транзакции
+      transactional-id-prefix: tx-
+      properties:
+        enable.idempotence: true
+        acks: all
+        max.in.flight.requests.per.connection: 1
+
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:payment-group}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      properties:
+        isolation.level: read_committed
+
+logging:
+  level:
+    root: ERROR
+    com.example.order_service: INFO
+    org.springframework: ERROR
+    org.apache.kafka: ERROR

@@ -3,6 +3,7 @@ package com.example.order_service.controller;
 import com.example.order_service.dto.OrderRequest;
 import com.example.order_service.dto.OrderResponse;
 import com.example.order_service.service.OrderService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class OrderController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public OrderResponse createOrder(@Valid @RequestBody OrderRequest orderDto) {
+  public OrderResponse createOrder(@Valid @RequestBody OrderRequest orderDto) throws JsonProcessingException {
     return orderService.createOrder(orderDto);
   }
 
